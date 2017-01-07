@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Text,
   Image,
+  LayoutAnimation,
   ListView,
   View
 } from 'react-native';
@@ -33,8 +34,34 @@ var pics = [pic1,pic2,pic3,pic4,pic5,pic6]
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-const TopNavigation = () => (
-  <View style={{ padding: 10, flexDirection: 'row', backgroundColor: '#eee' }}>
+export default class Index extends Component {
+  constructor(props){
+    super(props)
+
+    this.state = {
+      data: ds.cloneWithRows(data)
+    }
+  }
+
+  filter(val) {
+    console.log(val)
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+
+        if(val == 2){
+            var newData = data.filter(function (el) {
+          return el.age <= 18
+        })}else{
+              var newData = data.filter(function (el) {
+          return el.age > 18
+        })
+            }
+    this.setState({
+      data: ds.cloneWithRows(newData)
+    })
+
+}
+  TopNavigation(){
+  return(<View style={{ padding: 10, flexDirection: 'row', backgroundColor: '#eee' }}>
     <View style={{ flex: 1 }}><Text>My App</Text></View>
     <Menu onSelect={(value) => this.filter(value)}>
       <MenuTrigger>
@@ -49,26 +76,14 @@ const TopNavigation = () => (
         </MenuOption>
       </MenuOptions>
     </Menu>
-  </View>
-);
-
-export default class Index extends Component {
-  constructor(props){
-    super(props)
-
-    this.state = {
-      data: ds.cloneWithRows(data)
-    }
-  }
-  filter(x){
-
-  }
+  </View>);
+}
 
   checkAdult(age) {
     return age >= 18;
 }
 eachRow(x){
-  console.log(x)
+
   if(picStuff < 6){
     picStuff++
   }
@@ -88,7 +103,7 @@ eachRow(x){
   <View style={{flexDirection:'row', justifyContent:'space-around'}}>
   <Text style={{color:'#333', fontSize:11, fontWeight:'600', margin:10}}>{x.first_name} {x.last_name}</Text>
   <Text style={{color:'#333', fontSize:11, fontWeight:'600', margin:10}}>{x.gender}</Text>
-  <View style={{width:27, height:27, borderRadius:15, alignItems:"center", justifyContent:'center', backgroundColor:'#333'}}><Text style={{color:'#fff', fontSize:8, fontWeight:'600', margin:10}}>{x.age}</Text></View>
+  <View style={{width:27, height:27, borderRadius:15, alignItems:"center", justifyContent:'center', backgroundColor:'#333'}}><Text style={{color:'#fff', fontSize:7, fontWeight:'600'}}>{x.age}</Text></View>
   </View>
   <Text style={{marginLeft:10, fontSize:11}}>{x.email}</Text>
   </View>
@@ -101,7 +116,7 @@ eachRow(x){
     return (
       <View style={styles.container}>
         <MenuContext style={{ flex: 1 }}>
-    <TopNavigation/>
+    {this.TopNavigation()}
     <ListView
     dataSource = {this.state.data}
     renderRow = {(rowData) => this.eachRow(rowData)}
